@@ -1,4 +1,4 @@
 package com.example.cardatabase4;
 
-public class EBook {
+public class Product {
 }
