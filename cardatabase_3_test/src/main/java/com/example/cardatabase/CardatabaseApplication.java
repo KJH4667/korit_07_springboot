@@ -1,0 +1,79 @@
+package com.example.cardatabase;
+
+import com.example.cardatabase.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Arrays;
+
+@SpringBootApplication
+public class CardatabaseApplication implements CommandLineRunner {
+    private static final Logger logger = LoggerFactory.getLogger(
+            CardatabaseApplication.class
+    );
+
+    // 여기에 생성자 주입 부분 적겠스빈다(그리고, md파일로 옮기는 것도 함께 하겠습니다)
+    private final CarRepository repository;
+    private final AppUserRepository userRepository;
+    private final OwnerRepository ownerRepository;
+
+    public CardatabaseApplication(CarRepository repository, OwnerRepository ownerRepository, AppUserRepository userRepository) {
+        this.repository = repository;
+        this.ownerRepository = ownerRepository;
+        this.userRepository = userRepository;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(CardatabaseApplication.class, args);
+        logger.info("Application Started ! / 애플리케이션이 실행되었습니다.");
+    }
+
+
+    // CommandLineRunner 인터페이스의 추상메서드인 run()을 여기서 구현하는거네요.
+//    @Override
+//    public void run(String... args) throws Exception {
+//        // 내부에서 CarRepository의 객체인 repository의 메서드를 호출합니다.
+//        repository.save(new Car("kia", "Seltos", "Chacol", "370SU5690", 2020, 300000));
+//		repository.save(new Car("Hundai", "Sonata", "White", "123456", 2022, 250000));
+//		repository.save(new Car("kia", "Seltos", "Chacol", "370SU5690", 2020, 300000));
+//        // -> 이상의 코드는 testdb 내의 CAR테이블 내에 3개의 row를 추가하여 저장한다는 의미입니다.
+//        // Java 기준으로는 개체 세 개를 만들어서 저장했다고도 볼 수 있겠네요.
+//
+//        // 모든 자동차를 가져와서 Console에 로깅해보록 하겠습니다
+//        for (Car car : repository.findAll()) {
+//            logger.info("brand : {}, model : {}", car.getBrand(), car.getModel());
+//        }
+
+
+    @Override
+    public void run(String... args) throws Exception {
+        // 소유자 객체를 추가
+        Owner owner1 = new Owner("일", "김");
+        Owner owner2 = new Owner("이", "강");
+        // 다수의 객체를 한번에 저장하는 메서드 처음 사용해보겠습니다.
+        ownerRepository.saveAll(Arrays.asList(owner1, owner2));
+
+
+        repository.save(new Car("Kia", "Seltos", "Chacol", "370SU5690", 2020, 30000000, owner1));
+        repository.save(new Car("Hyundai", "Sonata", "White", "123456", 2025, 25000000, owner2));
+        repository.save(new Car("Honda", "CR-V", "Black-White", "987654", 2024, 45000000, owner2));
+
+        for (Car car : repository.findAll()) {
+            logger.info("brand : {}, model : {}", car.getBrand(), car.getModel());
+        }
+
+        // AppUser 더미 데이터 추가
+        //저 위에 보시면 Owner의 경우에느 owner1 / owner2 만들어가지고 ownerRepository에 저장했었습니다.
+        userRepository.save(new AppUser("user", "$2a$12$JjmwHu/A.gW3VcDoB2XWI.NNzg9oZkGpQQCXnsb86J048UvGbfScu", "USER"));
+        userRepository.save(new AppUser("admin", "$2a$12$0k.EuhE52hcGZbIDOEAqMuFCumOpcROvIz67b2JQYmlLL7FX4spOK", "ADMIN"));
+
+
+    }
+
+
+}
+
+

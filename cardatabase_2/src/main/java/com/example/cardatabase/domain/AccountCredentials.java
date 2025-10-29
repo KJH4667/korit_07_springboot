@@ -1,4 +1,5 @@
 package com.example.cardatabase.domain;
 
-public record AccountCredentials() {
+public record AccountCredentials(String username, String password) {
+
 }
